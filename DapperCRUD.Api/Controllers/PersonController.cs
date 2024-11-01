@@ -41,6 +41,14 @@ namespace DapperCRUD.Api.Controllers
             return Ok(person); 
         }
 
+        [HttpPut]
+        public async Task<ActionResult<Persons>> UpdatePerson(Persons person)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.ExecuteAsync("update person set name = @Name, firstName = @FirstName,  lastName=@LastName,  place=@Place where id =@Id", person);
+            return Ok(person);
+        }
+
         private static async Task<IEnumerable<Persons>> SelectAllPersons(SqlConnection connection)
         {
             return await connection.QueryAsync<Persons>("select * from person");
