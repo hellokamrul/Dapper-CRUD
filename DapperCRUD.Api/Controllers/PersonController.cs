@@ -33,5 +33,26 @@ namespace DapperCRUD.Api.Controllers
             return Ok(person);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Persons>> CreatePerson(Persons person)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.ExecuteAsync("insert into person(name, firstName,lastName,place) values(@Name,@FirstName,@LastName,@Place)",person);
+            return Ok(person); 
+        }
+
+        private static async Task<IEnumerable<Persons>> SelectAllPersons(SqlConnection connection)
+        {
+            return await connection.QueryAsync<Persons>("select * from person");
+        }
+
+        [HttpDelete("personId")]
+        public async Task<ActionResult<Persons>> RemovePerson(int id)
+        {
+            using var conncetion = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            var person = await conncetion.QueryFirstAsync<Persons>("delete from Person where id =@Id",
+                new { Id = id });
+            return Ok();
+        }
     }
 }
