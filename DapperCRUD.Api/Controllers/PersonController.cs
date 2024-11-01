@@ -24,5 +24,14 @@ namespace DapperCRUD.Api.Controllers
             return Ok(persons);
         }
 
+        [HttpGet("personId")]
+        public async Task<ActionResult<Persons>> GetPerson(int id)
+        {
+            using var conncetion = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            var person = await conncetion.QueryFirstAsync<Persons>("select * from Person where id =@Id",
+                new { Id = id });
+            return Ok(person);
+        }
+
     }
 }
